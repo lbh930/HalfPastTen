@@ -146,7 +146,7 @@ void UMultiplayerSessionSubsystem::OnCreateSessionComplete(FName SessionName, bo
 
 	if (bWasSuccessful) {
 		PrintString("Session created successfully");
-		GetWorld()->ServerTravel("/Game/ThirdPerson/Maps/ThirdPersonMap?listen");
+		GetWorld()->ServerTravel("/Game/Maps/HalfPastTen?listen");
 	}
 	else {
 		PrintString("Session creation failed");
