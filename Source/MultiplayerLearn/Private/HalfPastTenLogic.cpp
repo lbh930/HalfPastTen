@@ -2,6 +2,7 @@
 
 
 #include "HalfPastTenLogic.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 AHalfPastTenLogic::AHalfPastTenLogic()
@@ -49,5 +50,12 @@ void AHalfPastTenLogic::Tick(float DeltaTime)
 		//UE_LOG(LogTemp, Warning, TEXT("Client"));
 	}
 
+}
+
+void AHalfPastTenLogic::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AHalfPastTenLogic, CurrentState);
 }
 

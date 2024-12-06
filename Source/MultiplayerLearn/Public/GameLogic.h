@@ -4,10 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "GameFramework/GameState.h"
 #include "GameLogic.generated.h"
 
+
 UCLASS()
-class MULTIPLAYERLEARN_API AGameLogic : public AActor
+class MULTIPLAYERLEARN_API AGameLogic : public AGameState
 {
 	GENERATED_BODY()
 	

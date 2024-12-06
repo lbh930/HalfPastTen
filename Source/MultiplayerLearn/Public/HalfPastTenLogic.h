@@ -19,7 +19,7 @@ enum class EHalfPastTenGameState : uint8
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable, BlueprintType)
 class MULTIPLAYERLEARN_API AHalfPastTenLogic : public AGameLogic
 {
 	GENERATED_BODY()
@@ -27,8 +27,11 @@ class MULTIPLAYERLEARN_API AHalfPastTenLogic : public AGameLogic
 public:
 	AHalfPastTenLogic();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GameState")
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Game")
 	EHalfPastTenGameState CurrentState;
+
+	//replication map func
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 protected:
 	virtual void BeginPlay() override;

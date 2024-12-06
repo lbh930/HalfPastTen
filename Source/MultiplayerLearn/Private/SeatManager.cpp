@@ -34,7 +34,7 @@ void ASeatManager::Tick(float DeltaTime)
 	TArray<AActor*> FoundActors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerBase::StaticClass(), FoundActors);
 
-	Helpers::PrintString(FString::Printf(TEXT("Found %d players"), FoundActors.Num()));
+	//Helpers::PrintString(FString::Printf(TEXT("Found %d players"), FoundActors.Num()));
 
 	// 将 FoundActors 转换成 APlayerBase* 数组，方便排序
 	TArray<APlayerBase*> PlayerBases;
@@ -50,10 +50,6 @@ void ASeatManager::Tick(float DeltaTime)
 		return LHS.PlayerId < RHS.PlayerId;
 		});
 
-	// 打印排序后的 PlayerId（可选）
-	for (APlayerBase* Player : PlayerBases) {
-		Helpers::PrintString(FString::Printf(TEXT("PlayerId: %d"), Player->PlayerId));
-	}
 
 	// 为每个玩家分配位置和朝向
 	// 使用世界前方向为基准，然后根据玩家序号均匀环绕分布
@@ -70,7 +66,7 @@ void ASeatManager::Tick(float DeltaTime)
 
 			FRotator NewRotation = UKismetMathLibrary::FindLookAtRotation(PlayerLocation, targetLocation);
 
-			Helpers::PrintString(FString::Printf(TEXT("PlayerId: %d, NewLocation: %s"), Player->PlayerId, *PlayerLocation.ToString()));
+			//Helpers::PrintString(FString::Printf(TEXT("PlayerId: %d, NewLocation: %s"), Player->PlayerId, *PlayerLocation.ToString()));
 
 			Player->SetActorLocation(PlayerLocation);
 			Player->SetActorRotation(NewRotation);
