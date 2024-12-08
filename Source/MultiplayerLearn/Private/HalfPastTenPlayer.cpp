@@ -4,6 +4,7 @@
 #include "HalfPastTenPlayer.h"
 #include "HandCard.h"
 #include "Net/UnrealNetwork.h"
+#include "Helpers.h"
 
 double AHalfPastTenPlayer::GetTotalCardValues()
 {
@@ -29,3 +30,18 @@ void AHalfPastTenPlayer::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	DOREPLIFETIME(AHalfPastTenPlayer, PlayerCardValues);
 }
 
+void AHalfPastTenPlayer::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	if (HandDeck) {
+		HandDeck->SetActorLocation(FVector(0, 0, HandDeckHeight));
+		FVector ActorForwardVector = GetActorForwardVector();
+		ActorForwardVector.Z = 0;
+		HandDeck->SetActorLocation(GetActorLocation() + ActorForwardVector * HandDeckDistance);
+		HandDeck->SetActorRotation(GetActorRotation());
+		HandDeck->SetCardValues(PlayerCardValues);
+	}
+	else {
+		Helpers::PrintString("HandDeck is not set for player");
+	}
+}

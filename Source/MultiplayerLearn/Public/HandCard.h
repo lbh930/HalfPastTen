@@ -28,6 +28,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION(BlueprintCallable, Category = "Card")
+	void SetCardValue(int Value) { CardValue = Value; }
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Card")
 	FString CardText;
 

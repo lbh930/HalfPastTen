@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "PlayerBase.h"
+#include "HalfPastTenHandDeck.h"
 #include "HalfPastTenPlayer.generated.h"
 
 class AHandCard;
@@ -17,6 +18,8 @@ private:
 
 	
 public:
+	// Tick
+	virtual void Tick(float DeltaTime) override;
 
 	//An array of the player's cards
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Player")
@@ -27,6 +30,15 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player")
 	bool bIsReady; //click ready after seeing the first card
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player")
+	AHalfPastTenHandDeck* HandDeck;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player")
+	double HandDeckHeight = 100.0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player")
+	double HandDeckDistance = 50.0;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
