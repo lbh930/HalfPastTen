@@ -36,4 +36,5 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
 	void GenPlayerId();
+
 };

@@ -56,6 +56,7 @@ void AHalfPastTenHandDeck::GenCardActors(){
                 CardActor->SetCardValue(mCardValues[i]);
                 CardActor->AttachToComponent(DeckBasePosition, FAttachmentTransformRules::KeepRelativeTransform);
                 CardActor->SetActorRelativeLocation(FVector((double(i) - (double(n) / 2.0)) * CardGap, 0, 0));
+				CardActor->SetActorRelativeRotation(FRotator(0, 0, 0));
                 CardActors.Add(CardActor);
             }
             else {

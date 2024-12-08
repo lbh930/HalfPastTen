@@ -45,3 +45,4 @@ void APlayerBase::GenPlayerId()
 	PlayerId = FMath::RandRange(0, 100000);
 	Helpers::PrintString(FString::Printf(TEXT("PlayerId set to: %d"), PlayerId));
 }
+

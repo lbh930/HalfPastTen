@@ -30,6 +30,9 @@ public:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	UFUNCTION(BlueprintCallable, Category = "Seats")
+	TArray<APlayerBase*> GetPlayers() { return Players; }
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Seats")
 	double DeskRadius = 100.0f;
 

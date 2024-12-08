@@ -5,19 +5,32 @@
 #include "CoreMinimal.h"
 #include "PlayerBase.h"
 #include "HalfPastTenHandDeck.h"
+//include widget and text related headers
+#include "Blueprint/UserWidget.h"
+#include "Components/TextBlock.h"
+//where is getHud() from?
+#include "GameFramework/PlayerController.h"
+
 #include "HalfPastTenPlayer.generated.h"
 
 class AHandCard;
+class ASeatManager;
 
 UCLASS()
 class MULTIPLAYERLEARN_API AHalfPastTenPlayer : public APlayerBase
 {
 	GENERATED_BODY()
 
-private:
+protected:
+	UPROPERTY(VisibleAnywhere)
+	ASeatManager* SeatManager;
 
-	
+	//beginplay
+	virtual void BeginPlay() override;
+
 public:
+	AHalfPastTenPlayer();
+
 	// Tick
 	virtual void Tick(float DeltaTime) override;
 
@@ -40,6 +53,20 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player")
 	double HandDeckDistance = 50.0;
 
+	//For replication of Readyness
+	UFUNCTION(Server, BlueprintCallable, Reliable)
+	void ServerSetReady(bool bNewReady);
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Player")
+	bool bReady = false;
+
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	//Text
+	UFUNCTION(BlueprintCallable, Category = "Player")
+	void UpdatePlayerWidgetText(UTextBlock* textBlock, const FString& newText);
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+	FString GetPlayerReadyText();
 
 };

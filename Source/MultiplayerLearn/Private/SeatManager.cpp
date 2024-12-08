@@ -70,8 +70,12 @@ void ASeatManager::Tick(float DeltaTime)
 
 			Player->SetActorLocation(PlayerLocation);
 			Player->SetActorRotation(NewRotation);
+
+
 		}
 	}
+
+	Players = PlayerBases;
 }
 
 
