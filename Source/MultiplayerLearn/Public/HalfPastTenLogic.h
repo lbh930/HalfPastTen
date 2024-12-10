@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameLogic.h"
 #include "SeatManager.h"
+#include "HandCard.h"
 #include "HalfPastTenLogic.generated.h"
 
 UENUM(BlueprintType)
@@ -28,8 +29,11 @@ class MULTIPLAYERLEARN_API AHalfPastTenLogic : public AGameLogic
 public:
 	AHalfPastTenLogic();
 
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Game")
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Game_Auto")
 	EHalfPastTenGameState CurrentState;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Game_Manual")
+	AActor* DrawDeckPos;
 
 	//replication map func
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
@@ -38,19 +42,26 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Game")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Game_Auto")
 	ASeatManager* SeatManager;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Game")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Game_Auto")
 	TArray<int> RemainingDeck;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Game")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Game_Auto")
 	bool bFirstCardDealt = false;
 
-	UFUNCTION(BlueprintCallable, Category = "Game")
+	UFUNCTION(BlueprintCallable, Category = "Game_Auto")
 	void DealCardToPlayers(const TArray<AHalfPastTenPlayer*> & players);
 
-	UFUNCTION(BlueprintCallable, Category = "Game")
+	UFUNCTION(BlueprintCallable, Category = "Game_Auto")
 	int DrawCardFromDeck();
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Game_Auto")
+	bool bCardDrawn = false;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Game_Auto")
+	AHandCard* DrawnCard;
+
 	
 };
