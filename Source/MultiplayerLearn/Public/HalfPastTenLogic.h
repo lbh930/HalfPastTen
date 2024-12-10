@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameLogic.h"
+#include "SeatManager.h"
 #include "HalfPastTenLogic.generated.h"
 
 UENUM(BlueprintType)
@@ -37,5 +38,16 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Game")
+	ASeatManager* SeatManager;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Game")
+	TArray<int> RemainingDeck;
+
+	UFUNCTION(BlueprintCallable, Category = "Game")
+	void DealCardToPlayers(const TArray<AHalfPastTenPlayer*> & players);
+
+	UFUNCTION(BlueprintCallable, Category = "Game")
+	int DrawCardFromDeck();
 	
 };

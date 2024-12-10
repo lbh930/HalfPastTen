@@ -33,6 +33,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Seats")
 	TArray<APlayerBase*> GetPlayers() { return Players; }
 
+	UFUNCTION(BlueprintCallable, Category = "Seats")
+	TArray<AHalfPastTenPlayer*> GetHalfPastTenPlayers() {
+		TArray<AHalfPastTenPlayer*> halfPastTenPlayers;
+		for (APlayerBase* player : Players) {
+			if (AHalfPastTenPlayer* halfPastTenPlayer = Cast<AHalfPastTenPlayer>(player)) {
+				halfPastTenPlayers.Add(halfPastTenPlayer);
+			}
+		}
+		return halfPastTenPlayers;
+	}
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Seats")
 	double DeskRadius = 100.0f;
 

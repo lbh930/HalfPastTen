@@ -69,4 +69,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Player")
 	FString GetPlayerReadyText();
 
+	UFUNCTION(BlueprintCallable, Category = "Player")
+	void DealCard(int cardValue);
+
 };

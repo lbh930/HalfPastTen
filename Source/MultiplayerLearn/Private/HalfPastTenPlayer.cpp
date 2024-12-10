@@ -86,12 +86,16 @@ FString AHalfPastTenPlayer::GetPlayerReadyText() {
 			});
 
 		for (int i = 0; i < PlayerBases.Num(); i++) {
+			if (PlayerBases[i] == nullptr) {
+				Helpers::PrintString("AHalfPastTenPlayer::Tick() - PlayerBases[] is nullptr at " + FString::FromInt(i));
+				continue;
+			}
 			AHalfPastTenPlayer* Player = Cast<AHalfPastTenPlayer>(PlayerBases[i]);
 			if (Player) {
 				readyText += FString::Printf(TEXT("Player %d: %s\n"), Player->PlayerId, Player->bReady ? TEXT("Ready") : TEXT("Not Ready"));
 			}
 			else {
-				Helpers::PrintString("AHalfPastTenPlayer::Tick() - Player is null");
+				Helpers::PrintString("AHalfPastTenPlayer::Tick() - Players[] is nullptr at " + FString::FromInt(i));
 			}
 		}
 
@@ -124,4 +128,9 @@ void AHalfPastTenPlayer::UpdatePlayerWidgetText(UTextBlock* textBlock, const FSt
 	{
 		Helpers::PrintString("TextBlock is null");
 	}
+}
+
+void AHalfPastTenPlayer::DealCard(int cardValue)
+{
+	PlayerCardValues.Add(cardValue);
 }
