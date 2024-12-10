@@ -20,9 +20,9 @@ APlayerBase::APlayerBase()
 void APlayerBase::BeginPlay()
 {
 	Super::BeginPlay();
+	
 	if (HasAuthority()) {
 		GenPlayerId();
-
 	}
 
 }

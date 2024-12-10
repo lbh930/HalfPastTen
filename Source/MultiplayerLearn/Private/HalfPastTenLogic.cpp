@@ -45,6 +45,7 @@ int AHalfPastTenLogic::DrawCardFromDeck() {
 		else {
 			RemainingDeck[i]--;
 			resCard = i;
+			break;
 		}
 	}
 	return resCard;
@@ -82,7 +83,13 @@ void AHalfPastTenLogic::Tick(float DeltaTime)
 
 			//Check if all players has READY
 		{
+
 			TArray<AHalfPastTenPlayer*> players = SeatManager->GetHalfPastTenPlayers();
+			if (!bFirstCardDealt) {
+				this->DealCardToPlayers(players);
+				bFirstCardDealt = true;
+			}
+
 			bool allReady = true;
 			for (int i = 0; i < players.Num(); i++) {
 				if (players[i] == nullptr) {
@@ -105,9 +112,6 @@ void AHalfPastTenLogic::Tick(float DeltaTime)
 				}
 
 				Helpers::PrintString("All players are ready");
-
-				//Deal first card to players
-				this->DealCardToPlayers(players);	
 
 				CurrentState = EHalfPastTenGameState::GS_DrawCard;
 			}
