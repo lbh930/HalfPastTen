@@ -29,6 +29,12 @@ void AHalfPastTenLogic::BeginPlay()
 	for (int i = 1; i <= 13; i++) {
 		RemainingDeck.Add(4);
 	}
+    
+    //Get the card pool in the scene
+    this->CardPool = Cast<ACardPool>(UGameplayStatics::GetActorOfClass(GetWorld(), ACardPool::StaticClass()));
+    if (!CardPool) {
+        Helpers::PrintString("No CardPool found in the scene");
+    }
 
 }
 

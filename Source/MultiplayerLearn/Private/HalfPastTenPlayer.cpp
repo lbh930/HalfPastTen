@@ -26,6 +26,7 @@ void AHalfPastTenPlayer::BeginPlay()
 	else {
 		Helpers::PrintString("No SeatManager found in the scene");
 	}
+    
 }
 
 double AHalfPastTenPlayer::GetTotalCardValues()

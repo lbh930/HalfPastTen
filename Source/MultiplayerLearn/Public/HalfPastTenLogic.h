@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameLogic.h"
+#include "CardPool.h"
 #include "SeatManager.h"
 #include "HandCard.h"
 #include "HalfPastTenLogic.generated.h"
@@ -42,8 +43,14 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Game_Auto")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Game_Auto_Ref")
 	ASeatManager* SeatManager;
+    
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Game_Auto_Ref")
+    ACardPool* CardPool;
+    
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Game_Auto_Ref")
+    AHalfPastTenHandDeck* CardDeck; //for visualizing the shown cards
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Game_Auto")
 	TArray<int> RemainingDeck;
