@@ -13,26 +13,13 @@ ACardPool::ACardPool()
     // Enable replication
     bReplicates = true;
 
-    // Check if the world is valid before spawning
-    UWorld* World = GetWorld();
-    if (World)
-    {
-        // Spawn the card deck
-        HandDeck = World->SpawnActor<AHalfPastTenHandDeck>(AHalfPastTenHandDeck::StaticClass());
-        if (!HandDeck)
-        {
-            Helpers::PrintString("ACardPool::ACardPool() - HandDeck is not Spawned Properly");
-        }
-        else
-        {
-            HandDeck->SetOwner(this);
-        }
-    }
-    else
-    {
-        Helpers::PrintString("ACardPool::ACardPool() - GetWorld() returned nullptr");
-    }
+    // Create a ChildActorComponent to hold the HandDeck
+    HandDeckComponent = CreateDefaultSubobject<UChildActorComponent>(TEXT("HandDeckComponent"));
+    HandDeckComponent->SetupAttachment(RootComponent);
+    HandDeckComponent->SetChildActorClass(AHalfPastTenHandDeck::StaticClass());
 }
+
+
 
 
 ACardPool::~ACardPool() {
