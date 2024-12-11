@@ -29,8 +29,8 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	ASeatManager* SeatManager;
 
-	UPROPERTY(VisibleAnywhere)
-	AHalfPastTenHandDeck* HandDeck;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CardPool", meta = (AllowPrivateAccess = "true"))
+    UChildActorComponent* HandDeckComponent;
 
 public:	
 	// Called every frame
