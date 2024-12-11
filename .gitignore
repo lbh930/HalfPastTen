@@ -37,3 +37,9 @@
 *.opensdf
 *.sdf
 *.suo
+
+#mac
+MultiplayerLearn (Mac).xcworkspace/
+
+#others
+/upgradelog*
