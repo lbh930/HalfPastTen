@@ -16,7 +16,7 @@ public:
 	// Sets default values for this actor's properties
 	AHalfPastTenHandDeck();
 
-	void SetCardValues(TArray<int32>& CardValues);
+	void SetCardValues(TArray<int32>& CardValues, TArray<bool>& bIsFaceUp, bool _bIsLocalPlayerDeck);
 	
 
 protected:
@@ -42,7 +42,13 @@ public:
 	TArray<int32> mCardValues;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Deck")
+	TArray<bool> mCardFaceUp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Deck")
 	TSubclassOf<AHandCard> HandCardClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Deck")
+	bool bIsLocalPlayerDeck = false;
 
 	
 };

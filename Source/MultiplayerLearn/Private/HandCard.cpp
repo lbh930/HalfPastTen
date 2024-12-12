@@ -45,7 +45,10 @@ void AHandCard::Tick(float DeltaTime)
 			break;
 		}
 	}
+}
 
-
+void AHandCard::SetIsLocalPlayerCard(bool _bIsLocalPlayerCard)
+{
+	bIsLocalPlayerCard = _bIsLocalPlayerCard;
 }
 

@@ -27,7 +27,7 @@ void AHalfPastTenHandDeck::Tick(float DeltaTime)
 
 }
 
-void AHalfPastTenHandDeck::SetCardValues(TArray<int32>& CardValues)
+void AHalfPastTenHandDeck::SetCardValues(TArray<int32>& CardValues, TArray<bool> & bIsFaceUp, bool _bIsLocalPlayerDeck)
 {
 	if (this->mCardValues != CardValues) {
 		this->mCardValues = CardValues;
@@ -36,6 +36,8 @@ void AHalfPastTenHandDeck::SetCardValues(TArray<int32>& CardValues)
 	else {
 		this->mCardValues = CardValues;
 	}
+
+	this->bIsLocalPlayerDeck = _bIsLocalPlayerDeck;
 }
 void AHalfPastTenHandDeck::GenCardActors(){
     if (CardActors.Num() > 0) {
@@ -54,10 +56,20 @@ void AHalfPastTenHandDeck::GenCardActors(){
             AHandCard* CardActor = GetWorld()->SpawnActor<AHandCard>(HandCardClass, GetActorLocation(), GetActorRotation());
             if (CardActor) {
                 CardActor->SetCardValue(mCardValues[i]);
+				CardActor->SetIsFaceUp(mCardFaceUp[i]);
+				Helpers::PrintString("Set Card Value: " + FString::FromInt(mCardValues[i]) + " FaceUp: " + (mCardFaceUp[i] ? "True" : "False"));
                 CardActor->AttachToComponent(DeckBasePosition, FAttachmentTransformRules::KeepRelativeTransform);
                 CardActor->SetActorRelativeLocation(FVector((double(i) - (double(n) / 2.0)) * CardGap, 0, 0));
-				CardActor->SetActorRelativeRotation(FRotator(0, 0, 0));
+				if (CardActor->bIsFaceUp) {
+                    CardActor->SetActorRelativeRotation(FRotator(0, 0, 0));
+                }
+                else {
+					CardActor->SetActorRelativeRotation(FRotator(0, 180, 0));
+                }
+				
                 CardActors.Add(CardActor);
+
+				CardActor->SetIsLocalPlayerCard(bIsLocalPlayerDeck);
             }
             else {
 				Helpers::PrintString("CardActor is null!");

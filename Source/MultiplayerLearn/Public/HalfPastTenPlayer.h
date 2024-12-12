@@ -38,6 +38,9 @@ public:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Player")
 	TArray<int> PlayerCardValues;
 
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Player")
+	TArray<bool> PlayerCardFaceUp;
+
 	UFUNCTION(BlueprintCallable, Category = "Player")
 	double GetTotalCardValues();
 
@@ -70,6 +73,6 @@ public:
 	FString GetPlayerReadyText();
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
-	void DealCard(int cardValue);
+	void DealCard(int cardValue, bool bIsFaceUp);
 
 };

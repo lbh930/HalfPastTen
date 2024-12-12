@@ -57,7 +57,7 @@ int AHalfPastTenLogic::DrawCardFromDeck() {
 	return resCard;
 }
 
-void AHalfPastTenLogic::DealCardToPlayers(const TArray<AHalfPastTenPlayer*>& players) {
+void AHalfPastTenLogic::DealCardToPlayers(const TArray<AHalfPastTenPlayer*>& players, bool IsFaceUp) {
 	if (HasAuthority()) {
 		for (int playerIndex = 0; playerIndex < players.Num(); playerIndex++) {
 			if (players[playerIndex] == nullptr) {
@@ -69,7 +69,7 @@ void AHalfPastTenLogic::DealCardToPlayers(const TArray<AHalfPastTenPlayer*>& pla
 				Helpers::PrintString("AHalfPastTenLogic::DealCardToPlayers() - No card left in deck");
 				break;
 			}
-			players[playerIndex]->DealCard(card);
+			players[playerIndex]->DealCard(card, IsFaceUp);
 		}
 	}
 }
@@ -92,7 +92,7 @@ void AHalfPastTenLogic::Tick(float DeltaTime)
 
 			TArray<AHalfPastTenPlayer*> players = SeatManager->GetHalfPastTenPlayers();
 			if (!bFirstCardDealt) {
-				this->DealCardToPlayers(players);
+				this->DealCardToPlayers(players, false);
 				bFirstCardDealt = true;
 			}
 

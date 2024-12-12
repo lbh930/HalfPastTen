@@ -59,7 +59,7 @@ protected:
 	bool bFirstCardDealt = false;
 
 	UFUNCTION(BlueprintCallable, Category = "Game_Auto")
-	void DealCardToPlayers(const TArray<AHalfPastTenPlayer*> & players);
+	void DealCardToPlayers(const TArray<AHalfPastTenPlayer*> & players, bool bIsFaceUp);
 
 	UFUNCTION(BlueprintCallable, Category = "Game_Auto")
 	int DrawCardFromDeck();

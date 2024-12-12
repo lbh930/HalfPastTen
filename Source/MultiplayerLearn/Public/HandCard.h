@@ -31,6 +31,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Card")
 	void SetCardValue(int Value) { CardValue = Value; }
 
+	UFUNCTION(BluePrintCallable, Category = "Card")
+	void SetIsFaceUp(bool _bIsFaceUp) { bIsFaceUp = _bIsFaceUp; }
+
+	UFUNCTION(BlueprintCallable, Category = "Card")
+	void SetIsLocalPlayerCard(bool _bIsLocalPlayerCard);
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Card")
 	FString CardText;
 
@@ -42,5 +48,11 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Card")
 	AHalfPastTenPlayer* OwningPlayer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Card")
+	bool bIsFaceUp = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Card")
+	bool bIsLocalPlayerCard = false;
 
 };

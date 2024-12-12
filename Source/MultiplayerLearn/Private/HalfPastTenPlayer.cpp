@@ -51,6 +51,7 @@ void AHalfPastTenPlayer::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AHalfPastTenPlayer, PlayerCardValues);
+	DOREPLIFETIME(AHalfPastTenPlayer, PlayerCardFaceUp);
 	DOREPLIFETIME(AHalfPastTenPlayer, bReady);
 }
 
@@ -67,7 +68,13 @@ void AHalfPastTenPlayer::Tick(float DeltaTime)
 		actorRotation.Roll = 0;
 		actorRotation.Yaw += 90;
 		HandDeck->SetActorRotation(actorRotation);
-		HandDeck->SetCardValues(PlayerCardValues);
+		if (IsLocallyControlled()) {
+			HandDeck->SetCardValues(PlayerCardValues, PlayerCardFaceUp, true);
+		}
+		else {
+			HandDeck->SetCardValues(PlayerCardValues, PlayerCardFaceUp, false);
+		}
+		
 	}
 	else {
 		Helpers::PrintString("HandDeck is not set for player");
@@ -131,7 +138,8 @@ void AHalfPastTenPlayer::UpdatePlayerWidgetText(UTextBlock* textBlock, const FSt
 	}
 }
 
-void AHalfPastTenPlayer::DealCard(int cardValue)
+void AHalfPastTenPlayer::DealCard(int cardValue, bool bIsFaceUp)
 {
 	PlayerCardValues.Add(cardValue);
+	PlayerCardFaceUp.Add(bIsFaceUp);
 }
