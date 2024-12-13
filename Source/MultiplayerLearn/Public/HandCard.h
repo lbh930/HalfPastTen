@@ -65,5 +65,15 @@ public:
 
     UFUNCTION(BlueprintCallable, Category = "Card")
     void OnMouseHoverEnd(UPrimitiveComponent* TouchedComponent);
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Card")
+    FRotator FaceDownRotation = FRotator(180.0, 0, 0);
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Card")
+    FRotator FaceUpRotation = FRotator(0.0, 0, 0);
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Card")
+    FRotator FaceOwnerRotation = FRotator(60.0, 0, 0);
+    
 
 };
