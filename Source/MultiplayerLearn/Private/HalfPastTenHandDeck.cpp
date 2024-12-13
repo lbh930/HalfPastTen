@@ -31,10 +31,12 @@ void AHalfPastTenHandDeck::SetCardValues(TArray<int32>& CardValues, TArray<bool>
 {
 	if (this->mCardValues != CardValues) {
 		this->mCardValues = CardValues;
+        this->mCardFaceUp = bIsFaceUp;
 		GenCardActors();
 	}
 	else {
 		this->mCardValues = CardValues;
+        this->mCardFaceUp = bIsFaceUp;
 	}
 
 	this->bIsLocalPlayerDeck = _bIsLocalPlayerDeck;
@@ -50,6 +52,12 @@ void AHalfPastTenHandDeck::GenCardActors(){
     }
 
     int n = mCardValues.Num();
+    
+    if (mCardValues.Num() != mCardFaceUp.Num()) {
+        Helpers::PrintString("HalfPastTenHandDeck::GenCardActors() - CardValues and FaceUp array size mismatch! " +
+            FString::FromInt(mCardValues.Num()) + " vs " + FString::FromInt(mCardFaceUp.Num()) + " aborting function.");
+        return;
+    }
 
     for (int i = 0; i < n; i++) {
         if (HandCardClass) {
@@ -60,12 +68,20 @@ void AHalfPastTenHandDeck::GenCardActors(){
 				Helpers::PrintString("Set Card Value: " + FString::FromInt(mCardValues[i]) + " FaceUp: " + (mCardFaceUp[i] ? "True" : "False"));
                 CardActor->AttachToComponent(DeckBasePosition, FAttachmentTransformRules::KeepRelativeTransform);
                 CardActor->SetActorRelativeLocation(FVector((double(i) - (double(n) / 2.0)) * CardGap, 0, 0));
-				if (CardActor->bIsFaceUp) {
+                
+				if (mCardFaceUp[i]) {
+                    Helpers::PrintString("Card is face up, set rotator zero");
                     CardActor->SetActorRelativeRotation(FRotator(0, 0, 0));
                 }
                 else {
-					CardActor->SetActorRelativeRotation(FRotator(0, 180, 0));
+                    Helpers::PrintString("Card is face down, set rotator 180");
+					CardActor->SetActorRelativeRotation(FRotator(180, 0, 0));
                 }
+                
+                //print current location and rotation for sanity check
+                Helpers::PrintString("CardActor Location: " + CardActor->GetActorLocation().ToString());
+                Helpers::PrintString("CardActor Rotation: " + CardActor->GetActorRotation().ToString());
+                Helpers::PrintString ("-------------------");
 				
                 CardActors.Add(CardActor);
 

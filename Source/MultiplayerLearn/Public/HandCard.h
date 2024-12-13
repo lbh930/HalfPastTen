@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Components/BoxComponent.h"
 
 #include "Components/TextRenderComponent.h"
 
@@ -23,6 +24,10 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+    
+    //collision component
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Card")
+    UBoxComponent* CollisionComponent;
 
 public:	
 	// Called every frame
@@ -54,5 +59,11 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Card")
 	bool bIsLocalPlayerCard = false;
+    
+    UFUNCTION(BlueprintCallable, Category = "Card")
+    void OnMouseHoverBegin(UPrimitiveComponent* TouchedComponent);
+
+    UFUNCTION(BlueprintCallable, Category = "Card")
+    void OnMouseHoverEnd(UPrimitiveComponent* TouchedComponent);
 
 };

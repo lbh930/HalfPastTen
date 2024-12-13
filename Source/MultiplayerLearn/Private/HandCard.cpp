@@ -3,6 +3,7 @@
 
 #include "HandCard.h"
 #include "HalfPastTenPlayer.h"
+#include "Helpers.h"
 
 // Sets default values
 AHandCard::AHandCard()
@@ -12,7 +13,6 @@ AHandCard::AHandCard()
 
 	CardValue = 1;
 	CardText = "A";
-
 }
 
 // Called when the game starts or when spawned
@@ -52,3 +52,24 @@ void AHandCard::SetIsLocalPlayerCard(bool _bIsLocalPlayerCard)
 	bIsLocalPlayerCard = _bIsLocalPlayerCard;
 }
 
+void AHandCard::OnMouseHoverBegin(UPrimitiveComponent* TouchedComponent)
+{
+    Helpers::PrintString("OnMouseHoverBegin");
+    if (bIsLocalPlayerCard) {
+        Helpers::PrintString("OnMouseHoverBegin1");
+        FRotator NewRotation = GetActorRotation();
+        NewRotation.Roll += 180.0f;
+        SetActorRotation(NewRotation);
+    }
+}
+
+void AHandCard::OnMouseHoverEnd(UPrimitiveComponent* TouchedComponent)
+{
+    Helpers::PrintString("OnMouseHoverBegin");
+    if (bIsLocalPlayerCard) {
+        Helpers::PrintString("OnMouseHoverBegin1");
+        FRotator NewRotation = GetActorRotation();
+        NewRotation.Yaw -= 180.0f;
+        SetActorRotation(NewRotation);
+    }
+}

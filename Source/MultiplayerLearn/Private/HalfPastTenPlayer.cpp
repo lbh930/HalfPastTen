@@ -5,6 +5,9 @@
 #include "Net/UnrealNetwork.h"
 #include "Helpers.h"
 #include "SeatManager.h"
+#include "GameFramework/PlayerController.h"
+#include "Engine/World.h"
+
 
 AHalfPastTenPlayer::AHalfPastTenPlayer()
 {
@@ -27,7 +30,28 @@ void AHalfPastTenPlayer::BeginPlay()
 		Helpers::PrintString("No SeatManager found in the scene");
 	}
     
+    if (IsLocallyControlled()) {
+        APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+        if (PlayerController)
+        {
+            PlayerController->bShowMouseCursor = true;
+            PlayerController->DefaultMouseCursor = EMouseCursor::Default;
+        }
+    }
+    
+    if (IsLocallyControlled())
+    {
+        APlayerController* PlayerController = Cast<APlayerController>(GetController());
+        if (PlayerController)
+        {
+            PlayerController->bShowMouseCursor = true;
+            PlayerController->DefaultMouseCursor = EMouseCursor::Default;
+        }else{
+            Helpers::PrintString("AHalfPastTenLogic::BeginPlay() - PlayerController is nullptr");
+        }
+    }
 }
+
 
 double AHalfPastTenPlayer::GetTotalCardValues()
 {
@@ -58,6 +82,7 @@ void AHalfPastTenPlayer::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 void AHalfPastTenPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+    
 	if (HandDeck) {
 		HandDeck->SetActorLocation(FVector(0, 0, HandDeckHeight));
 		FVector ActorForwardVector = GetActorForwardVector();
