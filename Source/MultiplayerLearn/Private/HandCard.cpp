@@ -57,7 +57,7 @@ void AHandCard::OnMouseHoverBegin(UPrimitiveComponent* TouchedComponent)
     //Helpers::PrintString("OnMouseHoverBegin");
     if (bIsLocalPlayerCard && !bIsFaceUp){
         //Helpers::PrintString("OnMouseHoverBegin1");
-        FRotator NewRotation = FRotator(0.0, 0.0, 0.0);
+        FRotator NewRotation = FRotator(120.0, 0.0, 0.0);
         SetActorRelativeRotation(NewRotation);
     }
 }
@@ -67,7 +67,7 @@ void AHandCard::OnMouseHoverEnd(UPrimitiveComponent* TouchedComponent)
     //Helpers::PrintString("OnMouseHoverBegin");
     if (bIsLocalPlayerCard && !bIsFaceUp) {
         //Helpers::PrintString("OnMouseHoverBegin1");
-        FRotator NewRotation = FRotator(120.0, 0.0, 0.0);
+        FRotator NewRotation = FRotator(180.0, 0.0, 0.0);
         SetActorRelativeRotation(NewRotation);
     }
 }
