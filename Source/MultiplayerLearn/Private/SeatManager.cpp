@@ -2,7 +2,6 @@
 
 
 #include "SeatManager.h"
-#include "Net/UnrealNetwork.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Helpers.h"
@@ -42,8 +41,17 @@ void ASeatManager::Tick(float DeltaTime)
 		APlayerBase* Player = Cast<APlayerBase>(Actor);
 		if (Player) {
 			PlayerBases.Add(Player);
-		}
+        }else{
+            Helpers::PrintString("ASeatManager::Tick() - Actor is not APlayerBase");
+        }
 	}
+    
+    //check if anyone is set to null
+    for (int i = 0; i < PlayerBases.Num(); i++){
+        if (PlayerBases[i] == nullptr){
+            Helpers::PrintString("ASeatManager::Tick() Sanity1 - PlayerBases[] is nullptr at: " + FString::FromInt(i));
+        }
+    }
 
 	// 按照 PlayerId 进行从小到大的排序
 	PlayerBases.Sort([](const APlayerBase& LHS, const APlayerBase& RHS) {
@@ -70,21 +78,18 @@ void ASeatManager::Tick(float DeltaTime)
 
 			Player->SetActorLocation(PlayerLocation);
 			Player->SetActorRotation(NewRotation);
-
-
-		}
+        }else{
+            Helpers::PrintString("ASeatManager::Tick() - Players[] is nullptr at: " + FString::FromInt(i));
+        }
 	}
-
+    
+    
+    //check if anyone is set to null
+    for (int i = 0; i < PlayerBases.Num(); i++){
+        if (PlayerBases[i] == nullptr){
+            Helpers::PrintString("ASeatManager::Tick() Sanity2 - PlayerBases[] is nullptr at: " + FString::FromInt(i));
+        }
+    }
+         
 	Players = PlayerBases;
-}
-
-
-
-
-void ASeatManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	// Replicate the PlayerIdSequence array.
-	//DOREPLIFETIME(ASeatManager, PlayerIdSequence);
 }

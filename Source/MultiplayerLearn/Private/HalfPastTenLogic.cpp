@@ -126,6 +126,26 @@ void AHalfPastTenLogic::Tick(float DeltaTime)
 			break;
 		case EHalfPastTenGameState::GS_DrawCard:
 			//UE_LOG(LogTemp, Warning, TEXT("Draw Card"));
+                
+            if (!bCardDrawn) {
+                int card = this->DrawCardFromDeck();
+                if (card == -1) {
+                    Helpers::PrintString("No card left in deck! Set to 1 by default");
+                    card = 1;
+                }else{
+                    Helpers::PrintString("AHalfPastTenLogic::Tick() - Card drawn: " + FString::FromInt(card));
+                }
+                
+                if (CardPool){
+                    CardPool->ShowingCardValues.Add(card);
+                }else{
+                    Helpers::PrintString("AHalfPastTenLogic::Tick() - CardPool is NULL");
+                }
+                
+                bCardDrawn = true;
+            }else{
+                //wait for the players to bid
+            }
 			break;
 		case EHalfPastTenGameState::GS_CardDeal:
 			//UE_LOG(LogTemp, Warning, TEXT("Deal Card To Highest Bidder"));

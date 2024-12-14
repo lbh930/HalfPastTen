@@ -1,5 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+// A CardPool is a visualizer of a set of deck without the need of a player to own it
+// It is a deck of cards that is shown to all players
+// ACardPool is NOT responsible for storing what cards remain in the deck - this logic should be handled elsewhere
+// ACardPool IS responsible for replication of the card values it is showing
+
 #pragma once
 
 #include "CoreMinimal.h"
@@ -29,9 +34,6 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	ASeatManager* SeatManager;
 
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CardPool", meta = (AllowPrivateAccess = "true"))
-    UChildActorComponent* HandDeckComponent;
-
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -40,10 +42,21 @@ public:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "CardPool")
 	TArray<int> ShowingCardValues;
     
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CardPool", meta = (AllowPrivateAccess = "true"))
+    AHalfPastTenHandDeck* HandDeck; //for visualizing the shown cards
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CardPool")
+    FVector DeckPos = FVector(0, 0, 0);
+    
     //For Replication
     void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
     
+    UFUNCTION(BlueprintCallable, Category = "CardPool")
+    void AddCard(int CardValue) { ShowingCardValues.Add(CardValue); }
     
-
-
+    UFUNCTION(BlueprintCallable, Category = "CardPool")
+    void ClearCards() { ShowingCardValues.Empty(); }
+    
+    UFUNCTION(BlueprintCallable, Category = "CardPool")
+    int GetFirstCard() { return ShowingCardValues.Num() > 0 ? ShowingCardValues[0] : -1; }
 };

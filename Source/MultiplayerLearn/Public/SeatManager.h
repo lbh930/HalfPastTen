@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "PlayerBase.h"
 #include "HalfPastTenPlayer.h"
+#include "Helpers.h"
 #include "SeatManager.generated.h"
 
 
@@ -27,11 +28,17 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
+    
 	UFUNCTION(BlueprintCallable, Category = "Seats")
-	TArray<APlayerBase*> GetPlayers() { return Players; }
+    TArray<APlayerBase*> GetPlayers() {
+        for (int i = 0; i < Players.Num(); i++){
+            if (Players[i] == nullptr) {
+                Helpers::PrintString("ASeatManager::GetPlayers() 1 - Players[] is nullptr at " + FString::FromInt(i));
+                continue;
+            }
+        }
+        return Players;
+    }
 
 	UFUNCTION(BlueprintCallable, Category = "Seats")
 	TArray<AHalfPastTenPlayer*> GetHalfPastTenPlayers() {
@@ -39,7 +46,9 @@ public:
 		for (APlayerBase* player : Players) {
 			if (AHalfPastTenPlayer* halfPastTenPlayer = Cast<AHalfPastTenPlayer>(player)) {
 				halfPastTenPlayers.Add(halfPastTenPlayer);
-			}
+            }else{
+                Helpers::PrintString("ASeatManager::GetHalfPastTenPlayers() - Player is not AHalfPastTenPlayer");
+            }
 		}
 		return halfPastTenPlayers;
 	}

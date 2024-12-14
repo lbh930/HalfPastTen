@@ -111,6 +111,13 @@ FString AHalfPastTenPlayer::GetPlayerReadyText() {
 	if (SeatManager) {
 		FString readyText = "";
 		TArray<APlayerBase*> PlayerBases = SeatManager->GetPlayers();
+        
+        for (int i = 0; i < PlayerBases.Num(); i++){
+            if (PlayerBases[i] == nullptr) {
+                Helpers::PrintString("AHalfPastTenPlayer::GetPlayerReadyText() 1 - PlayerBases[] is nullptr at " + FString::FromInt(i));
+                continue;
+            }
+        }
 
 		//Helpers::PrintString("PlayerBases.Num(): " + FString::FromInt(PlayerBases.Num()));
 
@@ -120,7 +127,7 @@ FString AHalfPastTenPlayer::GetPlayerReadyText() {
 
 		for (int i = 0; i < PlayerBases.Num(); i++) {
 			if (PlayerBases[i] == nullptr) {
-				Helpers::PrintString("AHalfPastTenPlayer::Tick() - PlayerBases[] is nullptr at " + FString::FromInt(i));
+				Helpers::PrintString("AHalfPastTenPlayer::GetPlayerReadyText() - PlayerBases[] is nullptr at " + FString::FromInt(i));
 				continue;
 			}
 			AHalfPastTenPlayer* Player = Cast<AHalfPastTenPlayer>(PlayerBases[i]);
@@ -128,7 +135,7 @@ FString AHalfPastTenPlayer::GetPlayerReadyText() {
 				readyText += FString::Printf(TEXT("Player %d: %s\n"), Player->PlayerId, Player->bReady ? TEXT("Ready") : TEXT("Not Ready"));
 			}
 			else {
-				Helpers::PrintString("AHalfPastTenPlayer::Tick() - Players[] is nullptr at " + FString::FromInt(i));
+				Helpers::PrintString("AHalfPastTenPlayer::GetPlayerReadyText() - Players[] is nullptr at " + FString::FromInt(i));
 			}
 		}
 

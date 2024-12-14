@@ -45,9 +45,6 @@ public:
 	double GetTotalCardValues();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player")
-	bool bIsReady; //click ready after seeing the first card
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player")
 	AHalfPastTenHandDeck* HandDeck;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player")

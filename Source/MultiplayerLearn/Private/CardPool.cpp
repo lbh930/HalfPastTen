@@ -11,12 +11,7 @@ ACardPool::ACardPool()
     PrimaryActorTick.bCanEverTick = true;
 
     // Enable replication
-    bReplicates = true;
-
-    // Create a ChildActorComponent to hold the HandDeck
-    HandDeckComponent = CreateDefaultSubobject<UChildActorComponent>(TEXT("HandDeckComponent"));
-    HandDeckComponent->SetupAttachment(RootComponent);
-    HandDeckComponent->SetChildActorClass(AHalfPastTenHandDeck::StaticClass());
+    bReplicates = true;  
 }
 
 
@@ -39,6 +34,14 @@ void ACardPool::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	//Show the cards
+    if (HandDeck) {
+        HandDeck->SetActorLocation(DeckPos);
+        TArray<bool> FaceUp;
+        FaceUp.Init(true, ShowingCardValues.Num());
+        HandDeck->SetCardValues(ShowingCardValues, FaceUp, false);
+    }else{
+        Helpers::PrintString("ACardPool::Tick() - HandDeck is nullptr");
+    }
 }
 
 void ACardPool::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
