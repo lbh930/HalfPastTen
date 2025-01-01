@@ -30,7 +30,7 @@ class MULTIPLAYERLEARN_API AHalfPastTenLogic : public AGameLogic
 public:
 	AHalfPastTenLogic();
 
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Game_Auto")
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Game_Auto", ReplicatedUsing = OnRep_CurrentState)
 	EHalfPastTenGameState CurrentState;
     UFUNCTION(BlueprintCallable)
     EHalfPastTenGameState GetCurrentState() { return CurrentState; }
@@ -59,6 +59,10 @@ public:
 
 	//replication map func
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	//debug related
+	UFUNCTION(BlueprintCallable, Category = "Game")
+	FString GetStatusString();
 
 protected:
 	virtual void BeginPlay() override;
@@ -99,5 +103,8 @@ private:
     void ChangeState(EHalfPastTenGameState newState);
 
     bool bStateChangeTimerRunning = false;
+    
+    UFUNCTION()
+    void OnRep_CurrentState();
 	
 };

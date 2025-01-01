@@ -212,3 +212,21 @@ void AHalfPastTenPlayer::ServerBid_Implementation(int _playerId, int _currentBid
         }
     }
 }
+
+void AHalfPastTenPlayer::ServerWaive_Implementation(){
+    if (HasAuthority()){
+    	/* Player can only waive when they either
+    	1. Have not bid in this round
+    	2. Have bid but is not the highest bidder
+    	*/
+    	if (HalfPastTenLogic){
+    		if (CurrentBid == 0 || CurrentBid < HalfPastTenLogic->GetHighestBid())
+    		{
+    			bHasWaived = true;
+    		}
+    	}else
+    	{
+    		Helpers::PrintString("AHalfPastTenPlayer::ServerWaive_Implementation() - HalfPastTenLogic is not set for player");
+    	}
+    }
+}

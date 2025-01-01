@@ -75,12 +75,13 @@ public:
     UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadWrite, Category = "Player")
     bool bHasWaived = false;
     UFUNCTION (BlueprintCallable, Category = "Player")
-    void SetHasWaived(bool bNewHasWaived){bHasWaived = bNewHasWaived;}
-    UFUNCTION (BlueprintCallable, Category = "Player")
     bool GetHasWaived(){return bHasWaived;}
     
     UFUNCTION(Server, BlueprintCallable, Category = "Player", Reliable)
     void ServerBid(int _playerId, int _currentBid);
+    
+    UFUNCTION(Server, BlueprintCallable, Category = "Player", Reliable)
+    void ServerWaive();
     
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;

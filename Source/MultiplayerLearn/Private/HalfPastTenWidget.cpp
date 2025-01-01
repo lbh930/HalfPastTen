@@ -67,15 +67,10 @@ void UHalfPastTenWidget::OnBidButtonClicked(){
 }
 
 void UHalfPastTenWidget::OnWaiveButtonClicked(){
-    if (HalfPastTenLogic){
-        if (OwningPlayer){
-            OwningPlayer->SetHasWaived(true);
-        }else{
-            Helpers::PrintString("UHalfPastTenWidget::OnWaiveButtonClicked() - OwningPlayer is nullptr");
-        }
+    if (OwningPlayer){
+        OwningPlayer->ServerWaive();
     }else{
-        Helpers::PrintString("UHalfPastTenWidget::OnWaiveButtonClicked() - HalfPastTenLogic is nullptr");
-    
+        Helpers::PrintString("UHalfPastTenWidget::OnWaiveButtonClicked() - OwningPlayer is nullptr");
     }
 }
 

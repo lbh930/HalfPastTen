@@ -65,23 +65,23 @@ void AHalfPastTenHandDeck::GenCardActors(){
             if (CardActor) {
                 CardActor->SetCardValue(mCardValues[i]);
 				CardActor->SetIsFaceUp(mCardFaceUp[i]);
-				Helpers::PrintString("Set Card Value: " + FString::FromInt(mCardValues[i]) + " FaceUp: " + (mCardFaceUp[i] ? "True" : "False"));
+				//Helpers::PrintString("Set Card Value: " + FString::FromInt(mCardValues[i]) + " FaceUp: " + (mCardFaceUp[i] ? "True" : "False"));
                 CardActor->AttachToComponent(DeckBasePosition, FAttachmentTransformRules::KeepRelativeTransform);
                 CardActor->SetActorRelativeLocation(FVector((double(i) - (double(n) / 2.0)) * CardGap, 0, 0));
                 
 				if (mCardFaceUp[i]) {
-                    Helpers::PrintString("Card is face up, set rotator zero");
+                    //Helpers::PrintString("Card is face up, set rotator zero");
                     CardActor->SetActorRelativeRotation(FRotator(0, 0, 0));
                 }
                 else {
-                    Helpers::PrintString("Card is face down, set rotator 180");
+                    //Helpers::PrintString("Card is face down, set rotator 180");
 					CardActor->SetActorRelativeRotation(FRotator(180, 0, 0));
                 }
                 
                 //print current location and rotation for sanity check
-                Helpers::PrintString("CardActor Location: " + CardActor->GetActorLocation().ToString());
-                Helpers::PrintString("CardActor Rotation: " + CardActor->GetActorRotation().ToString());
-                Helpers::PrintString ("-------------------");
+                //Helpers::PrintString("CardActor Location: " + CardActor->GetActorLocation().ToString());
+                //Helpers::PrintString("CardActor Rotation: " + CardActor->GetActorRotation().ToString());
+                //Helpers::PrintString ("-------------------");
 				
                 CardActors.Add(CardActor);
 

@@ -148,6 +148,7 @@ void AHalfPastTenLogic::Tick(float DeltaTime)
                  wait for all the players to bid, until either:
                  1. A player bidded the maximum amount (>200)
                  2. All players waived
+                 3. All other players waived but one who has the largest bid remains
                 */
                 bool allWaived = true;
                 TArray<AHalfPastTenPlayer*> players = SeatManager->GetHalfPastTenPlayers();
@@ -160,8 +161,8 @@ void AHalfPastTenLogic::Tick(float DeltaTime)
                         Helpers::PrintString("AHalfPastTenLogic::Tick() - Player is nullptr at " + FString::FromInt(i));
                         continue;
                     }else{
-                        Helpers::PrintString("Player " + FString::FromInt(i) + " bHasWaived: " + (players[i]->bHasWaived ? "true" : "false"));
-                        if (!players[i]->bHasWaived){
+                        //Helpers::PrintString("Player " + FString::FromInt(i) + " bHasWaived: " + (players[i]->bHasWaived ? "true" : "false"));
+                        if (!players[i]->bHasWaived && players[i]->PlayerId != HighestBidPlayerId){
                             allWaived = false;
                             break;
                         }
@@ -169,6 +170,9 @@ void AHalfPastTenLogic::Tick(float DeltaTime)
                 }
                 if (allWaived || HighestBid >= MaximumBid){
                     //End this round of bidding!
+                	Helpers::PrintString("Bid ended");
+                	//Reset parameters for next round
+                	bCardDrawn = false;
                     CurrentState = EHalfPastTenGameState::GS_CardDeal;
                 }
             }
@@ -210,9 +214,13 @@ void AHalfPastTenLogic::Tick(float DeltaTime)
                 }
                 
                 //wait 1 second to get back to DrawCard state
+                ChangeStateTimed(EHalfPastTenGameState::GS_DrawCard, 1.0f);
+                //reset all parameters related to draw card
                 HighestBid = 0;
                 HighestBidPlayerId = -1;
-                //ChangeStateTimed(EHalfPastTenGameState::GS_DrawCard, 1.0f);
+                for (int i = 0; i < players.Num(); i++){
+                    players[i]->bHasWaived = false;
+                }
 
             }else{
                 Helpers::PrintString("AHalfPastTenLogic::Tick() - CardPool is NULL");
@@ -275,5 +283,32 @@ void AHalfPastTenLogic::ChangeState(EHalfPastTenGameState newState)
     bStateChangeTimerRunning = false;
 }
 
+void AHalfPastTenLogic::OnRep_CurrentState(){
+    Helpers::PrintString("AHalfPastTenLogic::OnRep_CurrentState() - CurrentState: " + FString::FromInt((int)CurrentState));
+    if (SeatManager){
+        AHalfPastTenPlayer* controllingPlayer = Cast<AHalfPastTenPlayer>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetPawn());
+        if (controllingPlayer){
+            controllingPlayer->SetCurrentBid(0);
+        }else{
+            Helpers::PrintString("AHalfPastTenLogic::OnRep_CurrentState() - controllingPlayer is nullptr");
+        }
+    }else{
+        Helpers::PrintString("AHalfPastTenLogic::OnRep_CurrentState() - SeatManager is nullptr");
+    }
+}
 
+FString AHalfPastTenLogic::GetStatusString(){
+	FString res = "CurrentState: " + FString::FromInt((int)CurrentState) + "\n";
+	res += "HighestBid: " + FString::FromInt(HighestBid) + "\n";
+	res += "HighestBidPlayerId: " + FString::FromInt(HighestBidPlayerId) + "\n";
+	TArray<AHalfPastTenPlayer*> players = SeatManager->GetHalfPastTenPlayers();
+	for (int i = 0; i < players.Num(); i++) {
+		if (players[i] == nullptr) {
+			Helpers::PrintString("AHalfPastTenLogic::GetStatusString() - Player is nullptr at " + FString::FromInt(i));
+			continue;
+		}
+		res += "Player " + FString::FromInt(i) + " - Ready: " + (players[i]->bReady ? "true" : "false") + " - Waived: " + (players[i]->bHasWaived ? "true" : "false") + "\n";
+	}
+	return res;
+}
 

@@ -16,7 +16,7 @@ AGameLogic::AGameLogic()
 void AGameLogic::BeginPlay()
 {
 	Super::BeginPlay();
-    Helpers::PrintString("AGameLogic::BeginPlay()! 112333");
+    Helpers::PrintString("AGameLogic::BeginPlay()! 0329");
 }
 
 // Called every frame
