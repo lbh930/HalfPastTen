@@ -44,9 +44,15 @@ public:
     int GetHighestBid() { return HighestBid; }
     
     UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadWrite, Category = "Game_Auto")
-    int HighestBidPlayerId;
+    int HighestBidPlayerId = -1;
     UFUNCTION(BlueprintCallable)
     int GetHighestBidPlayerId() { return HighestBidPlayerId; }
+    
+    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadWrite, Category = "Game_Manual")
+    int MaximumBid = 200;
+    UFUNCTION(BlueprintCallable)
+    int GetMaximumBid() { return MaximumBid; }
+    
     
     UFUNCTION(BlueprintCallable, Category = "Game_Auto")
     void TryBid(int playerId, int bid);
@@ -84,6 +90,14 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Game_Auto")
 	AHandCard* DrawnCard;
+    
+private:
+    FTimerHandle stateChangeTimerHandle;
 
+    void ChangeStateTimed(EHalfPastTenGameState newState, float delayTime);
+    
+    void ChangeState(EHalfPastTenGameState newState);
+
+    bool bStateChangeTimerRunning = false;
 	
 };

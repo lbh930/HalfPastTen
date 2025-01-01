@@ -202,11 +202,11 @@ int AHalfPastTenPlayer::GetCurrentBid(){
     return CurrentBid;
 }
 
-void AHalfPastTenPlayer::ServerBid_Implementation(){
+void AHalfPastTenPlayer::ServerBid_Implementation(int _playerId, int _currentBid){
     if (HasAuthority()){
         Helpers::PrintString("AHalfPastTenPlayer::Bid() - Player " + FString::FromInt(PlayerId) + " bids " + FString::FromInt(CurrentBid));
         if (HalfPastTenLogic){
-            HalfPastTenLogic->TryBid(PlayerId, CurrentBid);
+            HalfPastTenLogic->TryBid(_playerId, _currentBid);
         }else{
             Helpers::PrintString("AHalfPastTenPlayer::Bid() - HalfPastTenLogic is not set for player");
         }

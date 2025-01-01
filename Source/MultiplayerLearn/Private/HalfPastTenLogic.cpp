@@ -78,7 +78,7 @@ void AHalfPastTenLogic::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (HasAuthority()) {
+	if (HasAuthority() && !bStateChangeTimerRunning) {
 		switch (CurrentState)
 		{
 		case EHalfPastTenGameState::GE_Start:
@@ -144,11 +144,80 @@ void AHalfPastTenLogic::Tick(float DeltaTime)
                 
                 bCardDrawn = true;
             }else{
-                //wait for the players to bid
+                /*
+                 wait for all the players to bid, until either:
+                 1. A player bidded the maximum amount (>200)
+                 2. All players waived
+                */
+                bool allWaived = true;
+                TArray<AHalfPastTenPlayer*> players = SeatManager->GetHalfPastTenPlayers();
+                if (players.Num() == 0){
+                    Helpers::PrintString("AHalfPastTenLogic::Tick() - No players found");
+                }
+                
+                for (int i = 0; i < players.Num(); i++){
+                    if (players[i] == nullptr){
+                        Helpers::PrintString("AHalfPastTenLogic::Tick() - Player is nullptr at " + FString::FromInt(i));
+                        continue;
+                    }else{
+                        Helpers::PrintString("Player " + FString::FromInt(i) + " bHasWaived: " + (players[i]->bHasWaived ? "true" : "false"));
+                        if (!players[i]->bHasWaived){
+                            allWaived = false;
+                            break;
+                        }
+                    }
+                }
+                if (allWaived || HighestBid >= MaximumBid){
+                    //End this round of bidding!
+                    CurrentState = EHalfPastTenGameState::GS_CardDeal;
+                }
             }
 			break;
 		case EHalfPastTenGameState::GS_CardDeal:
 			//UE_LOG(LogTemp, Warning, TEXT("Deal Card To Highest Bidder"));
+            if (CardPool){
+                TArray<AHalfPastTenPlayer*> players = SeatManager->GetHalfPastTenPlayers();
+                
+                int cardToDeal = 1;
+                if (CardPool->ShowingCardValues.Num() > 0) {
+                    int cardToDeal = CardPool->ShowingCardValues.Last();  // 使用 Last() 更安全
+                    CardPool->ShowingCardValues.RemoveAt(CardPool->ShowingCardValues.Num() - 1);
+                } else {
+                    Helpers::PrintString("CardPool is NULL or ShowingCardValues is empty");
+                }
+                
+                //Deal the card to the highest bidder
+                if (HighestBidPlayerId >= 0){
+                    //Find the player that bids the highest and deal card
+                    bool bFound = false;
+                    for (int i = 0; i < players.Num(); i++){
+                        if (players[i] == nullptr){
+                            Helpers::PrintString("AHalfPastTenLogic::Tick() - Player is nullptr at " + FString::FromInt(i));
+                            continue;
+                        }else{
+                            if (players[i]->PlayerId == HighestBidPlayerId){
+                                players[i]->DealCard(cardToDeal, true);
+                                bFound = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (!bFound){
+                        Helpers::PrintString("AHalfPastTenLogic::Tick() - Player not found for HighestBidPlayerId: " + FString::FromInt(HighestBidPlayerId));
+                    }
+                }else{
+                    Helpers::PrintString("No Players Bidded. Card Destroyed.");
+                }
+                
+                //wait 1 second to get back to DrawCard state
+                HighestBid = 0;
+                HighestBidPlayerId = -1;
+                //ChangeStateTimed(EHalfPastTenGameState::GS_DrawCard, 1.0f);
+
+            }else{
+                Helpers::PrintString("AHalfPastTenLogic::Tick() - CardPool is NULL");
+                //this should not happen. the game will hang.
+            }
 			break;
 		case EHalfPastTenGameState::GS_End:
 			//UE_LOG(LogTemp, Warning, TEXT("End Game"));
@@ -189,4 +258,22 @@ void AHalfPastTenLogic::TryBid(int playerId, int bid)
         Helpers::PrintString("AHalfPastTenLogic::ServerTryBid_Implementation() - Not authority");
     }
 }
+
+void AHalfPastTenLogic::ChangeStateTimed(EHalfPastTenGameState newState, float delayTime){
+    GetWorld()->GetTimerManager().SetTimer(stateChangeTimerHandle, [this, newState]() { ChangeState(newState); }, delayTime, false);
+    bStateChangeTimerRunning = true;
+}
+
+void AHalfPastTenLogic::ChangeState(EHalfPastTenGameState newState)
+{
+    // Clear the timer to avoid potential conflicts
+    GetWorld()->GetTimerManager().ClearTimer(stateChangeTimerHandle);
+
+    // Update the state
+    CurrentState = newState;
+    
+    bStateChangeTimerRunning = false;
+}
+
+
 

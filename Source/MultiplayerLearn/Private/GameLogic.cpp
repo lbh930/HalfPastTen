@@ -2,6 +2,7 @@
 
 
 #include "GameLogic.h"
+#include "Helpers.h"
 
 // Sets default values
 AGameLogic::AGameLogic()
@@ -15,7 +16,7 @@ AGameLogic::AGameLogic()
 void AGameLogic::BeginPlay()
 {
 	Super::BeginPlay();
-	
+    Helpers::PrintString("AGameLogic::BeginPlay()! 112333");
 }
 
 // Called every frame

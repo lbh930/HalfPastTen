@@ -60,7 +60,7 @@ bool UHalfPastTenWidget::Initialize()
 void UHalfPastTenWidget::OnBidButtonClicked(){
     Helpers::PrintString("UHalfPastTenWidget::OnBidButtonClicked()");
     if (OwningPlayer){
-        OwningPlayer->ServerBid();
+        OwningPlayer->ServerBid(OwningPlayer->GetPlayerId(), OwningPlayer->GetCurrentBid());
     }else{
         Helpers::PrintString("UHalfPastTenWidget::OnBidButtonClicked() - OwningPlayer is nullptr");
     }
@@ -73,6 +73,9 @@ void UHalfPastTenWidget::OnWaiveButtonClicked(){
         }else{
             Helpers::PrintString("UHalfPastTenWidget::OnWaiveButtonClicked() - OwningPlayer is nullptr");
         }
+    }else{
+        Helpers::PrintString("UHalfPastTenWidget::OnWaiveButtonClicked() - HalfPastTenLogic is nullptr");
+    
     }
 }
 

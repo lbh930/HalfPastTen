@@ -80,7 +80,7 @@ public:
     bool GetHasWaived(){return bHasWaived;}
     
     UFUNCTION(Server, BlueprintCallable, Category = "Player", Reliable)
-    void ServerBid();
+    void ServerBid(int _playerId, int _currentBid);
     
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;

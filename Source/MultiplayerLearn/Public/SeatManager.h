@@ -23,9 +23,10 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	TArray<APlayerBase*> Players;
-
-public:	
+public:
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+    TArray<APlayerBase*> Players;
+    
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
     
@@ -41,17 +42,7 @@ public:
     }
 
 	UFUNCTION(BlueprintCallable, Category = "Seats")
-	TArray<AHalfPastTenPlayer*> GetHalfPastTenPlayers() {
-		TArray<AHalfPastTenPlayer*> halfPastTenPlayers;
-		for (APlayerBase* player : Players) {
-			if (AHalfPastTenPlayer* halfPastTenPlayer = Cast<AHalfPastTenPlayer>(player)) {
-				halfPastTenPlayers.Add(halfPastTenPlayer);
-            }else{
-                Helpers::PrintString("ASeatManager::GetHalfPastTenPlayers() - Player is not AHalfPastTenPlayer");
-            }
-		}
-		return halfPastTenPlayers;
-	}
+    TArray<AHalfPastTenPlayer*> GetHalfPastTenPlayers();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Seats")
 	double DeskRadius = 100.0f;

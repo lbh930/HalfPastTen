@@ -93,3 +93,19 @@ void ASeatManager::Tick(float DeltaTime)
          
 	Players = PlayerBases;
 }
+
+TArray<AHalfPastTenPlayer*> ASeatManager::GetHalfPastTenPlayers(){
+    TArray<AHalfPastTenPlayer*> halfPastTenPlayers;
+    for (APlayerBase* player : Players) {
+        if (IsValid(player)) {
+            if (AHalfPastTenPlayer* halfPastTenPlayer = Cast<AHalfPastTenPlayer>(player)) {
+                halfPastTenPlayers.Add(halfPastTenPlayer);
+            } else {
+                Helpers::PrintString("Player is not AHalfPastTenPlayer!");
+            }
+        } else {
+            Helpers::PrintString("Player is invalid or has been destroyed!");
+        }
+    }
+    return halfPastTenPlayers;
+}
