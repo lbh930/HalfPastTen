@@ -36,5 +36,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
 	void GenPlayerId();
-
+    
+    UFUNCTION(BlueprintCallable, Category = "Player")
+    int GetPlayerId() { return PlayerId; }
+    
 };

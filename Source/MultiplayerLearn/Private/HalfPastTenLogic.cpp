@@ -167,8 +167,26 @@ void AHalfPastTenLogic::Tick(float DeltaTime)
 
 void AHalfPastTenLogic::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+    
+    DOREPLIFETIME(AHalfPastTenLogic, CurrentState);
+    
+    DOREPLIFETIME(AHalfPastTenLogic, HighestBid);
+    
+    DOREPLIFETIME(AHalfPastTenLogic, HighestBidPlayerId);
+}
 
-	DOREPLIFETIME(AHalfPastTenLogic, CurrentState);
+void AHalfPastTenLogic::TryBid(int playerId, int bid)
+{
+    Helpers::PrintString("AHalfPastTenLogic::ServerTryBid_Implementation() - Player " + FString::FromInt(playerId) + " bids " + FString::FromInt(bid));
+    if (HasAuthority()){
+        if (bid > HighestBid){
+            HighestBid = bid;
+            HighestBidPlayerId = playerId;
+            Helpers::PrintString("AHalfPastTenLogic::ServerTryBid_Implementation() - Player " + FString::FromInt(playerId) + " has the highest bid of " + FString::FromInt(bid) + "! Set");
+        }
+    }else{
+        Helpers::PrintString("AHalfPastTenLogic::ServerTryBid_Implementation() - Not authority");
+    }
 }
 

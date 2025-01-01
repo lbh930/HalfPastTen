@@ -2,9 +2,11 @@
 
 #include "HalfPastTenPlayer.h"
 #include "HandCard.h"
+#include "Math/UnrealMathUtility.h"
 #include "Net/UnrealNetwork.h"
 #include "Helpers.h"
 #include "SeatManager.h"
+#include "HalfPastTenLogic.h"
 #include "GameFramework/PlayerController.h"
 #include "Engine/World.h"
 
@@ -29,6 +31,9 @@ void AHalfPastTenPlayer::BeginPlay()
 	else {
 		Helpers::PrintString("No SeatManager found in the scene");
 	}
+    
+    //get the game state in the scene
+    HalfPastTenLogic = Cast<AHalfPastTenLogic>(GetWorld()->GetGameState());
     
     if (IsLocallyControlled()) {
         APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
@@ -77,6 +82,8 @@ void AHalfPastTenPlayer::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	DOREPLIFETIME(AHalfPastTenPlayer, PlayerCardValues);
 	DOREPLIFETIME(AHalfPastTenPlayer, PlayerCardFaceUp);
 	DOREPLIFETIME(AHalfPastTenPlayer, bReady);
+    DOREPLIFETIME(AHalfPastTenPlayer, bHasWaived);
+    
 }
 
 void AHalfPastTenPlayer::Tick(float DeltaTime)
@@ -104,13 +111,23 @@ void AHalfPastTenPlayer::Tick(float DeltaTime)
 	else {
 		Helpers::PrintString("HandDeck is not set for player");
 	}
+    
+    if (HalfPastTenLogic){
+        if (HalfPastTenLogic->GetCurrentState() == EHalfPastTenGameState::GS_DrawCard){
+            if (IsLocallyControlled()){
+                CurrentBid = FMath::Max(CurrentBid, HalfPastTenLogic->GetHighestBid());
+            }
+        }
+    }else{
+        Helpers::PrintString("AHalfPastTenPlayer::Tick() - HalfPastTenLogic is not set for player");
+    }
 }
 
 FString AHalfPastTenPlayer::GetPlayerReadyText() {
 	//Set Readyness text
 	if (SeatManager) {
 		FString readyText = "";
-		TArray<APlayerBase*> PlayerBases = SeatManager->GetPlayers();
+		TArray<AHalfPastTenPlayer*> PlayerBases = SeatManager->GetHalfPastTenPlayers();
         
         for (int i = 0; i < PlayerBases.Num(); i++){
             if (PlayerBases[i] == nullptr) {
@@ -127,15 +144,15 @@ FString AHalfPastTenPlayer::GetPlayerReadyText() {
 
 		for (int i = 0; i < PlayerBases.Num(); i++) {
 			if (PlayerBases[i] == nullptr) {
-				Helpers::PrintString("AHalfPastTenPlayer::GetPlayerReadyText() - PlayerBases[] is nullptr at " + FString::FromInt(i));
+				Helpers::PrintString("AHalfPastTenPlayer::GetPlayerReadyText() 2~ - PlayerBases[] is nullptr at " + FString::FromInt(i));
 				continue;
 			}
-			AHalfPastTenPlayer* Player = Cast<AHalfPastTenPlayer>(PlayerBases[i]);
+			AHalfPastTenPlayer* Player = PlayerBases[i];
 			if (Player) {
 				readyText += FString::Printf(TEXT("Player %d: %s\n"), Player->PlayerId, Player->bReady ? TEXT("Ready") : TEXT("Not Ready"));
 			}
 			else {
-				Helpers::PrintString("AHalfPastTenPlayer::GetPlayerReadyText() - Players[] is nullptr at " + FString::FromInt(i));
+				Helpers::PrintString("AHalfPastTenPlayer::GetPlayerReadyText() 3?? - Players[] is nullptr at " + FString::FromInt(i));
 			}
 		}
 
@@ -174,4 +191,24 @@ void AHalfPastTenPlayer::DealCard(int cardValue, bool bIsFaceUp)
 {
 	PlayerCardValues.Add(cardValue);
 	PlayerCardFaceUp.Add(bIsFaceUp);
+}
+
+void AHalfPastTenPlayer::SetCurrentBid(int newBid)
+{
+    CurrentBid = newBid;
+}
+
+int AHalfPastTenPlayer::GetCurrentBid(){
+    return CurrentBid;
+}
+
+void AHalfPastTenPlayer::ServerBid_Implementation(){
+    if (HasAuthority()){
+        Helpers::PrintString("AHalfPastTenPlayer::Bid() - Player " + FString::FromInt(PlayerId) + " bids " + FString::FromInt(CurrentBid));
+        if (HalfPastTenLogic){
+            HalfPastTenLogic->TryBid(PlayerId, CurrentBid);
+        }else{
+            Helpers::PrintString("AHalfPastTenPlayer::Bid() - HalfPastTenLogic is not set for player");
+        }
+    }
 }

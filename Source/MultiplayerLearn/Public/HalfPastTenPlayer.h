@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "PlayerBase.h"
 #include "HalfPastTenHandDeck.h"
+
 //include widget and text related headers
 #include "Blueprint/UserWidget.h"
 #include "Components/TextBlock.h"
@@ -15,6 +16,7 @@
 
 class AHandCard;
 class ASeatManager;
+class AHalfPastTenLogic;
 
 UCLASS()
 class MULTIPLAYERLEARN_API AHalfPastTenPlayer : public APlayerBase
@@ -24,6 +26,9 @@ class MULTIPLAYERLEARN_API AHalfPastTenPlayer : public APlayerBase
 protected:
 	UPROPERTY(VisibleAnywhere)
 	ASeatManager* SeatManager;
+    
+    UPROPERTY(VisibleAnywhere)
+    AHalfPastTenLogic* HalfPastTenLogic;
 
 	//beginplay
 	virtual void BeginPlay() override;
@@ -59,6 +64,24 @@ public:
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Player")
 	bool bReady = false;
+    
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
+    int CurrentBid = 0;
+    UFUNCTION (BlueprintCallable, Category = "Player")
+    void SetCurrentBid(int newBid);
+    UFUNCTION (BlueprintCallable, Category = "Player")
+    int GetCurrentBid();
+    
+    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadWrite, Category = "Player")
+    bool bHasWaived = false;
+    UFUNCTION (BlueprintCallable, Category = "Player")
+    void SetHasWaived(bool bNewHasWaived){bHasWaived = bNewHasWaived;}
+    UFUNCTION (BlueprintCallable, Category = "Player")
+    bool GetHasWaived(){return bHasWaived;}
+    
+    UFUNCTION(Server, BlueprintCallable, Category = "Player", Reliable)
+    void ServerBid();
+    
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
@@ -71,5 +94,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
 	void DealCard(int cardValue, bool bIsFaceUp);
+    
+    
 
 };

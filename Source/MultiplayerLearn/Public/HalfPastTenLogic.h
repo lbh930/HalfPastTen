@@ -32,9 +32,24 @@ public:
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Game_Auto")
 	EHalfPastTenGameState CurrentState;
+    UFUNCTION(BlueprintCallable)
+    EHalfPastTenGameState GetCurrentState() { return CurrentState; }
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Game_Manual")
 	AActor* DrawDeckPos;
+    
+    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadWrite, Category = "Game_Auto")
+    int HighestBid;
+    UFUNCTION(BlueprintCallable)
+    int GetHighestBid() { return HighestBid; }
+    
+    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadWrite, Category = "Game_Auto")
+    int HighestBidPlayerId;
+    UFUNCTION(BlueprintCallable)
+    int GetHighestBidPlayerId() { return HighestBidPlayerId; }
+    
+    UFUNCTION(BlueprintCallable, Category = "Game_Auto")
+    void TryBid(int playerId, int bid);
 
 	//replication map func
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
