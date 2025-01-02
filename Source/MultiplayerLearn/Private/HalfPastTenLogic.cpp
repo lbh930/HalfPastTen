@@ -162,7 +162,7 @@ void AHalfPastTenLogic::Tick(float DeltaTime)
                         continue;
                     }else{
                         //Helpers::PrintString("Player " + FString::FromInt(i) + " bHasWaived: " + (players[i]->bHasWaived ? "true" : "false"));
-                        if (!players[i]->bHasWaived && players[i]->PlayerId != HighestBidPlayerId){
+                        if (!players[i]->GetIsDead() && !players[i]->bHasWaived && players[i]->PlayerId != HighestBidPlayerId){
                             allWaived = false;
                             break;
                         }
@@ -184,7 +184,7 @@ void AHalfPastTenLogic::Tick(float DeltaTime)
                 
                 int cardToDeal = 1;
                 if (CardPool->ShowingCardValues.Num() > 0) {
-                    int cardToDeal = CardPool->ShowingCardValues.Last();  // 使用 Last() 更安全
+                    cardToDeal = CardPool->ShowingCardValues.Last();  // 使用 Last() 更安全
                     CardPool->ShowingCardValues.RemoveAt(CardPool->ShowingCardValues.Num() - 1);
                 } else {
                     Helpers::PrintString("CardPool is NULL or ShowingCardValues is empty");
@@ -192,46 +192,96 @@ void AHalfPastTenLogic::Tick(float DeltaTime)
                 
                 //Deal the card to the highest bidder
                 if (HighestBidPlayerId >= 0){
-                    //Find the player that bids the highest and deal card
-                    bool bFound = false;
-                    for (int i = 0; i < players.Num(); i++){
-                        if (players[i] == nullptr){
-                            Helpers::PrintString("AHalfPastTenLogic::Tick() - Player is nullptr at " + FString::FromInt(i));
-                            continue;
-                        }else{
-                            if (players[i]->PlayerId == HighestBidPlayerId){
-                                players[i]->DealCard(cardToDeal, true);
-                                bFound = true;
-                                break;
-                            }
-                        }
-                    }
-                    if (!bFound){
-                        Helpers::PrintString("AHalfPastTenLogic::Tick() - Player not found for HighestBidPlayerId: " + FString::FromInt(HighestBidPlayerId));
-                    }
+                	if (bIsStrike)
+                	{
+                		Helpers::PrintString("STRIKE! Card Destroyed.");
+                		StrikeCount += 1;
+                	}else
+                	{
+                		//Find the player that bids the highest and deal card
+                		bool bFound = false;
+                		for (int i = 0; i < players.Num(); i++){
+                			if (players[i] == nullptr){
+                				Helpers::PrintString("AHalfPastTenLogic::Tick() - Player is nullptr at " + FString::FromInt(i));
+                				continue;
+                			}else{
+                				if (players[i]->PlayerId == HighestBidPlayerId){
+                					players[i]->DealCard(cardToDeal, true);
+                					bFound = true;
+                					break;
+                				}
+                			}
+                		}
+                		if (!bFound){
+                			Helpers::PrintString("AHalfPastTenLogic::Tick() - Player not found for HighestBidPlayerId: " + FString::FromInt(HighestBidPlayerId));
+                		}
+                	}
                 }else{
                     Helpers::PrintString("No Players Bidded. Card Destroyed.");
-                }
-                
-                //wait 1 second to get back to DrawCard state
-                ChangeStateTimed(EHalfPastTenGameState::GS_DrawCard, 1.0f);
-                //reset all parameters related to draw card
-                HighestBid = 0;
-                HighestBidPlayerId = -1;
-                for (int i = 0; i < players.Num(); i++){
-                    players[i]->bHasWaived = false;
+                	PassCount += 1;
                 }
 
+            	//Check if someone overflowed
+            	for (auto player : players) { 
+            		if (player->GetTotalCardValues() > 10.6 ) { //avoid float comparison error
+            			player->SetIsDead(true);
+            			Helpers::PrintString("Player " + FString::FromInt(player->PlayerId) + " overflowed!");
+            		}
+            	}
+
+            	/*Check if game should end. The Game ends when:
+            	 *1. Exempt overflowed players, there is only one player left
+            	 *2. Strikes reached maximum amount or Passes reached maximum amount
+            	*/
+            	int alivePlayerCount = 0;
+            	for (auto player : players)
+            	{
+            		if (!player->GetIsDead())
+            		{
+            			alivePlayerCount++;
+            		}
+            	}
+            	if (alivePlayerCount <= 1 || StrikeCount >= MaximumStrikeCount || PassCount >= MaximumPassCount)
+            	{
+            		//Print string and mention the ending condition triggered
+            		if (alivePlayerCount <= 1)
+					{
+						Helpers::PrintString("Game Ended! Reason: Only one player left");
+					}
+					else if (StrikeCount >= MaximumStrikeCount)
+					{
+						Helpers::PrintString("Game Ended! Reason: Strikes reached maximum amount");
+					}
+					else if (PassCount >= MaximumPassCount)
+					{
+						Helpers::PrintString("Game Ended! Reason: Passes reached maximum amount");
+					}
+            		
+            		ChangeStateTimed(EHalfPastTenGameState::GS_End, 1.0f);
+            	}else
+            	{
+            		//if the game did not end, wait 1 second to get back to DrawCard state
+            		ChangeStateTimed(EHalfPastTenGameState::GS_DrawCard, 1.0f);
+            	}
+            	
+            	//reset all parameters related to draw card
+            	HighestBid = 0;
+            	HighestBidPlayerId = -1;
+            	for (int i = 0; i < players.Num(); i++){
+            		players[i]->bHasWaived = false;
+            	}
             }else{
                 Helpers::PrintString("AHalfPastTenLogic::Tick() - CardPool is NULL");
+            	
                 //this should not happen. the game will hang.
             }
 			break;
 		case EHalfPastTenGameState::GS_End:
-			//UE_LOG(LogTemp, Warning, TEXT("End Game"));
+			// Waiting to Restart
+			
 			break;
 		default:
-			//(LogTemp, Warning, TEXT("Invalid State"));
+			Helpers::PrintString("HalfPastTenLogic::Tick() - Game in Invalid State!");
 			break;
 		}
 	}
@@ -251,20 +301,42 @@ void AHalfPastTenLogic::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
     DOREPLIFETIME(AHalfPastTenLogic, HighestBid);
     
     DOREPLIFETIME(AHalfPastTenLogic, HighestBidPlayerId);
+
+	DOREPLIFETIME(AHalfPastTenLogic, PassCount);
+
+	DOREPLIFETIME(AHalfPastTenLogic, StrikeCount);
+
+	DOREPLIFETIME(AHalfPastTenLogic, bIsStrike);
 }
 
 void AHalfPastTenLogic::TryBid(int playerId, int bid)
 {
     Helpers::PrintString("AHalfPastTenLogic::ServerTryBid_Implementation() - Player " + FString::FromInt(playerId) + " bids " + FString::FromInt(bid));
     if (HasAuthority()){
-        if (bid > HighestBid){
+        if ((bIsStrike && bid >= HighestBid*2) || (!bIsStrike && bid > HighestBid)){
             HighestBid = bid;
             HighestBidPlayerId = playerId;
+        	bIsStrike = false;
             Helpers::PrintString("AHalfPastTenLogic::ServerTryBid_Implementation() - Player " + FString::FromInt(playerId) + " has the highest bid of " + FString::FromInt(bid) + "! Set");
         }
     }else{
         Helpers::PrintString("AHalfPastTenLogic::ServerTryBid_Implementation() - Not authority");
     }
+}
+
+void AHalfPastTenLogic::TryStrike(int playerId, int bid)
+{
+	Helpers::PrintString("AHalfPastTenLogic::ServerTryStrike_Implementation() - Player " + FString::FromInt(playerId) + " strikes " + FString::FromInt(bid));
+	if (HasAuthority()){
+		if ((bIsStrike && bid >= HighestBid*2) || (!bIsStrike && bid > HighestBid)){
+			HighestBid = bid;
+			HighestBidPlayerId = playerId;
+			bIsStrike = true;
+			Helpers::PrintString("AHalfPastTenLogic::ServerTryBid_Implementation() - Player " + FString::FromInt(playerId) + " has the highest strike of " + FString::FromInt(bid) + "! Set");
+		}
+	}else{
+		Helpers::PrintString("AHalfPastTenLogic::ServerTryStrike_Implementation() - Not authority");
+	}
 }
 
 void AHalfPastTenLogic::ChangeStateTimed(EHalfPastTenGameState newState, float delayTime){
@@ -283,32 +355,22 @@ void AHalfPastTenLogic::ChangeState(EHalfPastTenGameState newState)
     bStateChangeTimerRunning = false;
 }
 
-void AHalfPastTenLogic::OnRep_CurrentState(){
-    Helpers::PrintString("AHalfPastTenLogic::OnRep_CurrentState() - CurrentState: " + FString::FromInt((int)CurrentState));
-    if (SeatManager){
-        AHalfPastTenPlayer* controllingPlayer = Cast<AHalfPastTenPlayer>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetPawn());
-        if (controllingPlayer){
-            controllingPlayer->SetCurrentBid(0);
-        }else{
-            Helpers::PrintString("AHalfPastTenLogic::OnRep_CurrentState() - controllingPlayer is nullptr");
-        }
-    }else{
-        Helpers::PrintString("AHalfPastTenLogic::OnRep_CurrentState() - SeatManager is nullptr");
-    }
-}
-
 FString AHalfPastTenLogic::GetStatusString(){
 	FString res = "CurrentState: " + FString::FromInt((int)CurrentState) + "\n";
-	res += "HighestBid: " + FString::FromInt(HighestBid) + "\n";
-	res += "HighestBidPlayerId: " + FString::FromInt(HighestBidPlayerId) + "\n";
+	res += "PassCount: " + FString::FromInt(PassCount) + "; ";
+	res += "StrikeCount: " + FString::FromInt(StrikeCount) + "\n";
 	TArray<AHalfPastTenPlayer*> players = SeatManager->GetHalfPastTenPlayers();
 	for (int i = 0; i < players.Num(); i++) {
 		if (players[i] == nullptr) {
 			Helpers::PrintString("AHalfPastTenLogic::GetStatusString() - Player is nullptr at " + FString::FromInt(i));
 			continue;
 		}
-		res += "Player " + FString::FromInt(i) + " - Ready: " + (players[i]->bReady ? "true" : "false") + " - Waived: " + (players[i]->bHasWaived ? "true" : "false") + "\n";
+		res += "Player " + FString::FromInt(players[i]->GetPlayerId()) + " - Ready: " + (players[i]->bReady ? "true" : "false") + " - Waived: " + (players[i]->bHasWaived ? "true" : "false") + "\n";
 	}
+
+	res += "HighestBid: " + FString::FromInt(HighestBid) + "; ";
+	res += "ByPlayer: " + FString::FromInt(HighestBidPlayerId) + "\n";
+	res += (bIsStrike ? "STRIKE" : "BID");
 	return res;
 }
 

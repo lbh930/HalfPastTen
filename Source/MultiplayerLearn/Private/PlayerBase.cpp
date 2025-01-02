@@ -38,6 +38,7 @@ void APlayerBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(APlayerBase, PlayerId);
+	DOREPLIFETIME(APlayerBase, bIsDead);
 }
 
 void APlayerBase::GenPlayerId()

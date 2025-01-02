@@ -14,6 +14,7 @@
 
 #include "HalfPastTenPlayer.generated.h"
 
+enum class EHalfPastTenGameState : uint8;
 class AHandCard;
 class ASeatManager;
 class AHalfPastTenLogic;
@@ -82,7 +83,11 @@ public:
     
     UFUNCTION(Server, BlueprintCallable, Category = "Player", Reliable)
     void ServerWaive();
-    
+
+	UFUNCTION(Server, BlueprintCallable, Category = "Player", Reliable)
+	void ServerStrike(int _playerId, int _currentBid);
+
+	void OnStateChanged(EHalfPastTenGameState newState);
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
@@ -95,7 +100,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
 	void DealCard(int cardValue, bool bIsFaceUp);
-    
-    
-
+	
+private:
+	EHalfPastTenGameState LastState;
 };

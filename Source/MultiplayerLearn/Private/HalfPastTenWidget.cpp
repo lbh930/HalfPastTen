@@ -82,4 +82,12 @@ void UHalfPastTenWidget::OnRaiseButtonClicked(int newBidAdded){
     }
 }
 
+void UHalfPastTenWidget::OnStrikeButtonClicked(){
+    if (OwningPlayer){
+        OwningPlayer->ServerStrike(OwningPlayer->GetPlayerId(), OwningPlayer->GetCurrentBid());
+    }else{
+        Helpers::PrintString("UHalfPastTenWidget::OnStrikeButtonClicked() - OwningPlayer is nullptr");
+    }
+}
+
 

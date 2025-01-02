@@ -111,16 +111,29 @@ void AHalfPastTenPlayer::Tick(float DeltaTime)
 	else {
 		Helpers::PrintString("HandDeck is not set for player");
 	}
-    
-    if (HalfPastTenLogic){
-        if (HalfPastTenLogic->GetCurrentState() == EHalfPastTenGameState::GS_DrawCard){
-            if (IsLocallyControlled()){
-                CurrentBid = FMath::Max(CurrentBid, HalfPastTenLogic->GetHighestBid());
+
+	//local player logics
+	if (IsLocallyControlled()){
+		if (HalfPastTenLogic){
+			if (IsLocallyControlled() && HalfPastTenLogic->GetCurrentState() != LastState)
+			{
+				LastState = HalfPastTenLogic->GetCurrentState();
+				OnStateChanged(LastState);
+			}
+			
+			if (HalfPastTenLogic->GetCurrentState() == EHalfPastTenGameState::GS_DrawCard){
+				if (HalfPastTenLogic->GetIsStrike()){
+					CurrentBid = FMath::Max(CurrentBid, HalfPastTenLogic->GetHighestBid()*2);
+				}else
+				{
+					CurrentBid = FMath::Max(CurrentBid, HalfPastTenLogic->GetHighestBid());
+				}
             }
-        }
-    }else{
-        Helpers::PrintString("AHalfPastTenPlayer::Tick() - HalfPastTenLogic is not set for player");
-    }
+			
+		}else{
+			Helpers::PrintString("AHalfPastTenPlayer::Tick() - HalfPastTenLogic is not set for player");
+		}
+	}
 }
 
 FString AHalfPastTenPlayer::GetPlayerReadyText() {
@@ -220,7 +233,8 @@ void AHalfPastTenPlayer::ServerWaive_Implementation(){
     	2. Have bid but is not the highest bidder
     	*/
     	if (HalfPastTenLogic){
-    		if (CurrentBid == 0 || CurrentBid < HalfPastTenLogic->GetHighestBid())
+    		if (HalfPastTenLogic->GetHighestBid() == 0 ||
+    			HalfPastTenLogic->GetHighestBidPlayerId() != PlayerId)
     		{
     			bHasWaived = true;
     		}
@@ -228,5 +242,32 @@ void AHalfPastTenPlayer::ServerWaive_Implementation(){
     	{
     		Helpers::PrintString("AHalfPastTenPlayer::ServerWaive_Implementation() - HalfPastTenLogic is not set for player");
     	}
+    }else
+    {
+	    Helpers::PrintString("AHalfPastTenPlayer::ServerWaive_Implementation() - Not authority");
     }
+}
+
+void AHalfPastTenPlayer::ServerStrike_Implementation(int _playerId, int _currentBid)
+{
+	if (HasAuthority()){
+		if (HalfPastTenLogic){
+			HalfPastTenLogic->TryStrike(_playerId, _currentBid);
+		}else{
+			Helpers::PrintString("AHalfPastTenPlayer::ServerStrike_Implementation() - HalfPastTenLogic is not set for player");
+		}
+	}else{
+		Helpers::PrintString("AHalfPastTenPlayer::ServerStrike_Implementation() - Not authority");
+	}
+}
+
+void AHalfPastTenPlayer::OnStateChanged(EHalfPastTenGameState newState)
+{
+	if (!IsLocallyControlled()) return;
+	
+	if (newState == EHalfPastTenGameState::GS_CardDeal) {
+		CurrentBid = 0;
+	}else if (newState == EHalfPastTenGameState::GS_DrawCard){
+		CurrentBid = FMath::Max(CurrentBid, HalfPastTenLogic->GetHighestBid());
+	}
 }

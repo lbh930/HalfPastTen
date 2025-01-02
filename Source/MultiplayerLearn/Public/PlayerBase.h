@@ -39,5 +39,15 @@ public:
     
     UFUNCTION(BlueprintCallable, Category = "Player")
     int GetPlayerId() { return PlayerId; }
+
+	//Getters and Setters
+	UFUNCTION(BlueprintCallable, Category = "Player")
+	bool GetIsDead() { return bIsDead; }
+	UFUNCTION(BlueprintCallable, Category = "Player")
+	void SetIsDead(bool bNewIsDead) { bIsDead = bNewIsDead; }
+
+protected:
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadWrite, Category = "Player")
+	bool bIsDead = false;
     
 };

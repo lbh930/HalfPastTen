@@ -39,6 +39,9 @@ public:
     
     UFUNCTION(BlueprintCallable, Category = "HalfPastTenWidget")
     void OnRaiseButtonClicked(int raiseAmount);
+
+    UFUNCTION(BlueprintCallable, Category = "HalfPastTenWidget")
+    void OnStrikeButtonClicked();
     
 protected:
 

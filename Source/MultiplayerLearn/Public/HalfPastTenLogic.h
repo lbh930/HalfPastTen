@@ -30,7 +30,7 @@ class MULTIPLAYERLEARN_API AHalfPastTenLogic : public AGameLogic
 public:
 	AHalfPastTenLogic();
 
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Game_Auto", ReplicatedUsing = OnRep_CurrentState)
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Game_Auto")
 	EHalfPastTenGameState CurrentState;
     UFUNCTION(BlueprintCallable)
     EHalfPastTenGameState GetCurrentState() { return CurrentState; }
@@ -56,6 +56,9 @@ public:
     
     UFUNCTION(BlueprintCallable, Category = "Game_Auto")
     void TryBid(int playerId, int bid);
+
+	UFUNCTION(BlueprintCallable, Category = "Game_Auto")
+	void TryStrike(int playerId, int bid);
 
 	//replication map func
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
@@ -94,6 +97,46 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Game_Auto")
 	AHandCard* DrawnCard;
+
+public: //Getter and Setters
+	UFUNCTION(BlueprintCallable)
+	void SetPassCount(int count) { PassCount = count; }
+	UFUNCTION(BlueprintCallable)
+	int GetPassCount() { return PassCount; }
+
+	UFUNCTION(BlueprintCallable)
+	void SetStrikeCount(int count) { StrikeCount = count; }
+	UFUNCTION(BlueprintCallable)
+	int GetStrikeCount() { return StrikeCount; }
+
+	UFUNCTION(BlueprintCallable)
+	void SetIsStrike(bool bStrike) { bIsStrike = bStrike; }
+	UFUNCTION(BlueprintCallable)
+	bool GetIsStrike() { return bIsStrike; }
+
+	UFUNCTION(BlueprintCallable)
+	void GetMaximumPassCount(int count) { MaximumPassCount = count; }
+	
+	UFUNCTION(BlueprintCallable)
+	void GetMaximumStrikeCount(int count) { MaximumStrikeCount = count; }
+
+protected:
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadWrite, Category = "Game_Auto")
+	int PassCount;
+
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadWrite, Category = "Game_Auto")
+	int StrikeCount;
+
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadWrite, Category = "Game_Auto")
+	bool bIsStrike = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Game_Auto")
+	int MaximumPassCount = 3;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Game_Auto")
+	int MaximumStrikeCount = 3;
+
+	
     
 private:
     FTimerHandle stateChangeTimerHandle;
@@ -103,8 +146,5 @@ private:
     void ChangeState(EHalfPastTenGameState newState);
 
     bool bStateChangeTimerRunning = false;
-    
-    UFUNCTION()
-    void OnRep_CurrentState();
 	
 };
